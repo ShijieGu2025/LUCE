@@ -526,4 +526,5 @@ legend = legend_ax.legend(
 # ================= 保存输出 =================
 fig.text(0.06, 0.5, 'Carbon emissions  (Gt C)', rotation=90, va='center', ha='center', fontsize=28, weight='bold')
 plt.savefig(r'F:\Data\paper\paper1\pic\Globalemissionscomposement9.png', dpi=400, bbox_inches='tight')
+
 # plt.show()
