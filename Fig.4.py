@@ -22,26 +22,27 @@ plt.rcParams['axes.unicode_minus'] = False  # 正确显示负号
 warnings.filterwarnings('ignore')
 
 # ========= 路径与场景 =========
-shapefile_path = r"F:\Data\Landuse\nineregion_shp\World_shp_byCountry2.shp"
+shapefile_path = r"G:\Data\Landuse\nineregion_shp\World_shp_byCountry2_EPSG6933_fixed.shp"
 scenario_paths = {
-    "SSP126": r"F:\Data\Landuse\PFT_5KM\SSP126_Resampled\New_Result\SSP126totalcombined_carbon_emission_2015_2100.tif",
-    "SSP245": r"F:\Data\Landuse\PFT_5KM\SSP245_Resampled\New_Result\SSP245totalcombined_carbon_emission_2015_2100.tif",
-    "SSP370": r"F:\Data\Landuse\PFT_5KM\SSP370_Resampled\New_Result\SSP370totalcombined_carbon_emission_2015_2100.tif",
-    "SSP585": r"F:\Data\Landuse\PFT_5KM\SSP585_Resampled\New_Result\SSP585totalcombined_carbon_emission_2015_2100.tif"
+    "SSP126": r"G:\Data\Landuse\PFT_5KM\SSP126_Resampled\New_Result\SSP126totalcombined_carbon_emission_2015_2100.tif",
+    "SSP245": r"G:\Data\Landuse\PFT_5KM\SSP245_Resampled\New_Result\SSP245totalcombined_carbon_emission_2015_2100.tif",
+    "SSP370": r"G:\Data\Landuse\PFT_5KM\SSP370_Resampled\New_Result\SSP370totalcombined_carbon_emission_2015_2100.tif",
+    "SSP585": r"G:\Data\Landuse\PFT_5KM\SSP585_Resampled\New_Result\SSP585totalcombined_carbon_emission_2015_2100.tif"
 }
-save_dir = r"F:\Data\paper\paper1\pic"
+save_dir = r"G:\Data\paper\paper1\pic"
 os.makedirs(save_dir, exist_ok=True)
 
 # 国家简称映射
 abbr_dict = {
     "Peoples Republic of China": "China",
-    "United States Of America": "America",
+    "United States Of America": "United States",
     "Russian Federation": "Russia",
     "Federative Republic of Brazil": "Brazil",
     "Commonwealth of Australia": "Australia",
     "Republic of Indonesia": "Indonesia",
     "Democratic Republic of Congo": "DRC",
-"Canada": "Canada"
+"Canada": "Canada",
+          "Federal Republic of Nigeria":"Nigeria"
 }
 
 # 情景名称映射（用于展示标准格式）
@@ -154,7 +155,7 @@ for i, scenario in enumerate(scenario_paths.keys()):
     ax.set_ylim(miny-5, maxy+5)
     ax.xaxis.set_major_locator(ticker.MultipleLocator(60))
     ax.yaxis.set_major_locator(ticker.MultipleLocator(30))
-    ax.tick_params(axis='both', which='both', labelsize=12)
+    ax.tick_params(axis='both', which='both', labelsize=18)
 
     # ==== 修改开始：第一行用顶部刻度，第二行用底部刻度 ====
     xticks = [x for x in ax.get_xticks() if minx <= x <= maxx]
@@ -202,7 +203,7 @@ for i, lab in enumerate(panel_labels):
         0.02, 0.98, lab,
         transform=axs_map[i].transAxes,
         ha='left', va='top',
-        fontsize=16, fontweight='bold', zorder=10,
+        fontsize=18, fontweight='bold', zorder=10,
         bbox=dict(facecolor='white', edgecolor='none', alpha=0.7, boxstyle='round,pad=0.2')
     )
 
@@ -212,8 +213,8 @@ fig_map.subplots_adjust(right=0.9)
 cbar_ax = fig_map.add_axes([0.92, 0.25, 0.02, 0.5])
 sm = ScalarMappable(norm=norm, cmap=cmap); sm.set_array([])
 cbar = fig_map.colorbar(sm, cax=cbar_ax, orientation='vertical')
-cbar.set_label('Carbon Emissions (GtC)', fontsize=13, labelpad=12)
-cbar.ax.tick_params(labelsize=11)
+cbar.set_label('Carbon fluxes (Gt C)', fontsize=18, labelpad=12)
+cbar.ax.tick_params(labelsize=18)
 
 # 保存地图图
 map_path = os.path.join(save_dir, 'global_carbon_maps.png')
@@ -222,11 +223,12 @@ print(f"[OK] 地图图已保存：{map_path}")
 
 # ========= 准备分析数据 =========
 # 三个重点国家
-focus_countries = ['Federative Republic of Brazil', 'United States Of America', 'Canada']
+focus_countries = ['Federative Republic of Brazil', 'United States Of America', 'Federal Republic of Nigeria', 'Canada']
 country_colors = {
     'Federative Republic of Brazil': '#1b9e77',
     'United States Of America': '#d95f02',
-    'Canada': '#7570b3'
+    'Federal Republic of Nigeria': '#7570b3',
+'Canada': '#e7298a'
 }
 # 各情景全球总量
 global_emissions = {sc: gdf[f'{sc}_emission'].sum() for sc in scenario_paths.keys()}
@@ -324,15 +326,17 @@ for i in range(len(scenario_names)):
     x_center = three_sum / 2.0  # 三国段的中心
     ax5.text(x_center, y[i],
              f'{pct:.0f}%',
-             va='center', ha='center', fontsize=12, color='black',
+             va='center', ha='center', fontsize=18, color='black',
              bbox=dict(boxstyle="round,pad=0.25", facecolor='goldenrod', alpha=0.85, edgecolor='gray'))
 
 # 轴与标签（情景名在 y 轴）
 ax5.set_yticks(y)
-ax5.set_yticklabels(scenario_names, fontsize=13)
-ax5.set_xlabel('Carbon Emissions (GtC)', fontsize=13)
+ax5.set_yticklabels(scenario_names, fontsize=18)
+# —— 图2 左子图 ax5：增大 X 轴刻度字体
+ax5.tick_params(axis='x', which='both', labelsize=18)
+ax5.set_xlabel('Cumulative carbon fluxes (Gt C)', fontsize=18)
 ax5.grid(axis='x', linestyle='--', alpha=0.3)
-ax5.legend(loc='lower right', fontsize=12, frameon=False)
+ax5.legend(loc='lower right', fontsize=18, frameon=False)
 # —— 第二行两个子图左上角添加 a, b 标注
 
 
@@ -343,73 +347,143 @@ ax5.legend(loc='lower right', fontsize=12, frameon=False)
 
 
 # --- 右：箱型图（仅显示前三大源汇转换国家）
+# --- 右：竖向散点图（每个国家 4 个情景点 + Δ 标注）
 ax6 = fig_pan.add_subplot(gs_pan[0, 1])
 
 if boxplot_data:
-    positions = np.arange(1, len(boxplot_data) + 1)
-    bp = ax6.boxplot(boxplot_data, positions=positions, patch_artist=True,
-                     showfliers=False, widths=0.6)
-    colors_bp = ['#1b9e77', '#d95f02', '#7570b3']
-    for i, patch in enumerate(bp['boxes']):
-        patch.set_facecolor(colors_bp[i % len(colors_bp)])
-        patch.set_alpha(0.7)
+    n = len(boxplot_data)
+
+    base_pos = np.arange(1, n + 1, dtype=float)   # 用来固定x轴范围
+    positions = base_pos.copy()                   # 用来真正画点/标注/刻度
+
+    edge_shift = 0.15  # 小数完全没问题：0.1~0.3自己调
+    if n >= 2:
+        positions[0]  += edge_shift
+        positions[-1] -= edge_shift
+
+    # 关键：固定x轴范围（别让autoscale跟着positions变）
+    ax6.set_xlim(base_pos[0] - 0.5, base_pos[-1] + 0.5)
+
+    # 后面 scatter / Δ / xticks 全部继续用 positions
+    # ax6.scatter(positions, vals, ...)
+    # ax6.text(positions[i], ...)
+    # ax6.set_xticks(positions)
+
+
+    # 为四个情景设置颜色（用于图例）
+    scenario_colors = {
+        "SSP126": "#1b9e77",
+        "SSP245": "#d95f02",
+        "SSP370": "#7570b3",
+        "SSP585": "#e7298a"
+    }
+
+    scenario_list = list(scenario_paths.keys())  # ["SSP126","SSP245","SSP370","SSP585"]
+    all_vals = []  # 用于统一 y 轴范围
+
+    # 按情景绘制竖向散点：每个国家一个 x，4 个不同颜色的点
+    for sc_idx, sc in enumerate(scenario_list):
+        vals = [es[sc_idx] for es in boxplot_data]  # 对每个国家取该情景的值
+        all_vals.extend(vals)
+        ax6.scatter(
+            positions,
+            vals,
+            s=60,
+            color=scenario_colors[sc],
+            label=scenario_name_map[sc]
+        )
+
+    # 变化范围 Δ 标注：每个国家上方一个 Δ= max-min
+    mid_i = (len(boxplot_data) - 1) / 2  # 左半边/右半边分界
+    dx_pts = 0# 偏移量（points），想更明显就调大，比如 12/14
+
+    # 变化范围 Δ 标注：每个国家上方一个 Δ= max-min
+    for i, es in enumerate(boxplot_data):
+        if es:
+            rng = max(es) - min(es)
+            ax6.text(
+                positions[i],
+                max(es) + 0.2,  # 在该国家最高值上方一点
+                f'Δ={rng:.2f}',
+                ha='center',
+                fontsize=18,
+                color='black'
+            )
 
     # 参考线
     ax6.axhline(y=0, color='gray', linestyle='--', alpha=0.6)
 
-    # 变化范围Δ标注
-    for i, es in enumerate(boxplot_data):
-        if es:
-            rng = max(es) - min(es)
-            ax6.text(positions[i], max(es) + 0.1, f'Δ={rng:.2f}',
-                     ha='center', fontsize=12, color='black')
+    # # 如果还有“其他国家”的提示，保留省略号逻辑
+    # if other_countries_count > 0:
+    #     other_pos = positions[-1] + 1.0
+    #     ax6.text(other_pos, 0.0, '...', ha='center', va='center',
+    #              fontsize=18, color='gray')
+    #     ax6.text(other_pos, 0.2, 'Other countries',
+    #              ha='center', va='bottom',
+    #              fontsize=18, color='black',
+    #              bbox=dict(facecolor='white', alpha=0.7,
+    #                        edgecolor='none', pad=2))
+    #     ax6.set_xlim(0.5, other_pos + 0.6)
+    # else:
+    #     ax6.set_xlim(0.5, positions[-1] + 0.5)
 
-    # 省略号占位
-    if other_countries_count > 0:
-        other_pos = positions[-1] + 1.0
-        # 放一个省略号提示（不加真实箱型）
-        ax6.text(other_pos, 0.0, '...', ha='center', va='center', fontsize=28, color='gray')
-        ax6.text(other_pos, 0.2, 'Other countries', ha='center', va='bottom',
-                 fontsize=11, color='black',
-                 bbox=dict(facecolor='white', alpha=0.7, edgecolor='none', pad=2))
-        # 扩展x轴范围以容纳省略号
-        ax6.set_xlim(0.5, other_pos + 0.6)
+    # x 轴：国家标签（用缩写）
+    ax6.set_xticks(positions)
+    ax6.set_xticklabels(boxplot_labels, fontsize=18)
 
-    ax6.set_xticks(np.arange(1, len(boxplot_labels) + 1))
-    ax6.set_xticklabels(boxplot_labels, fontsize=12)
-    ax6.set_ylabel('Carbon Emissions (GtC)', fontsize=13)
+    # y 轴与网格
+    ax6.set_ylabel('Cumulative carbon fluxes (Gt C)', fontsize=18)
     ax6.grid(axis='y', linestyle='--', alpha=0.3)
-    ymin, ymax = ax6.get_ylim()
-    span = ymax - ymin if ymax > ymin else 1.0
-    ax6.set_ylim(ymin - 0.15 * span, ymax + 0.25 * span)
-    # ax6.set_title('Countries with source–sink transitions (boxplot)', fontsize=14, pad=6)
+    ax6.tick_params(axis='y', which='both', labelsize=18)
+
+    # 统一 y 轴范围，略留空白边以容纳 Δ 标注
+    if all_vals:
+        ymin, ymax = min(all_vals), max(all_vals)
+        span = ymax - ymin if ymax > ymin else 1.0
+        ax6.set_ylim(ymin - 0.15 * span, ymax + 0.35 * span)
+
+    # 图例：放右上角，两行（2 列），不加标题
+    ax6.legend(
+        fontsize=14,
+        frameon=False,
+        loc='upper right',
+        ncol=2,
+    columnspacing = 0.6,  # 列与列之间更紧一点（默认一般是 1.0-1.5）
+    handletextpad = 0.4,  # 点和文字之间也紧一点
+    borderaxespad = 0.3,  # 图例与坐标轴边界的内边距
+    bbox_to_anchor = (1.0, 0.95)  # 整体往下移一点，y 从 1 调到 0.9 左右
+    )
+
 else:
-    ax6.text(0.5, 0.5, "No countries show source–sink transition across scenarios",
-             ha='center', va='center', fontsize=12, color='red')
+    ax6.text(0.5, 0.5,
+             "No countries show source–sink transition across scenarios",
+             ha='center', va='center', fontsize=18, color='red')
     ax6.set_axis_off()
+
+
 # —— 图2两个子图添加 a,b（左上角）
 ax5.text(
-    0.92, 0.98, 'a',
+    0.94, 0.98, 'a',
     transform=ax5.transAxes,
     ha='left', va='top',
-    fontsize=16, fontweight='bold', zorder=10,
+    fontsize=18, fontweight='bold', zorder=10,
     bbox=dict(facecolor='white', edgecolor='none', alpha=0.7, boxstyle='round,pad=0.2')
 )
 ax6.text(
-    0.92, 0.98, 'b',
+    0.94, 0.98, 'b',
     transform=ax6.transAxes,
     ha='left', va='top',
-    fontsize=16, fontweight='bold', zorder=10,
+    fontsize=18, fontweight='bold', zorder=10,
     bbox=dict(facecolor='white', edgecolor='none', alpha=0.7, boxstyle='round,pad=0.2')
 )
 
 
 fig_pan.tight_layout()
-panel_path = os.path.join(save_dir, 'global_carbon_emissions_panels.png')
+panel_path = os.path.join(save_dir, 'global_carbon_emissions_panels4.png')
 fig_pan.savefig(panel_path, dpi=400, bbox_inches='tight')
 print(f"[OK] 分析图已保存：{panel_path}")
 
 # ========= 导出CSV =========
-csv_path = os.path.join(save_dir, 'global_carbon_emissions.csv')
+csv_path = os.path.join(save_dir, 'global_carbon_emissions1.csv')
 all_scenarios_df.to_csv(csv_path, index=False)
 print(f"[OK] CSV数据文件已保存：{csv_path}")
