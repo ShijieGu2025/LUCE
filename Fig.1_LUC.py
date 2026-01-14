@@ -20,6 +20,7 @@ import io
 import warnings
 from matplotlib.ticker import ScalarFormatter
 import matplotlib.transforms as mtransforms
+from matplotlib.ticker import FuncFormatter
 
 # 设置全局字体为Times New Roman
 plt.rcParams['font.family'] = 'serif'
@@ -38,31 +39,31 @@ scenarios_spatial = [
     {
         "name": "SSP1-2.6",
         "code": "126",
-        "path_2015": r"F:\Data\Landuse\PFT_5KM\SSP126_Resampled\SSP126_Reclassified\PFT_2015_126_reclassified.tif",
-        "path_2100": r"F:\Data\Landuse\PFT_5KM\SSP126_Resampled\SSP126_Reclassified\PFT_2100_126_reclassified.tif"
+        "path_2015": r"G:\Data\Landuse\PFT_5KM\SSP126_Resampled\SSP126_Reclassified\PFT_2015_126_reclassified.tif",
+        "path_2100": r"G:\Data\Landuse\PFT_5KM\SSP126_Resampled\SSP126_Reclassified\PFT_2100_126_reclassified.tif"
     },
     {
         "name": "SSP2-4.5",
         "code": "245",
-        "path_2015": r"F:\Data\Landuse\PFT_5KM\SSP245_Resampled\SSP245_Reclassified\PFT_2015_245_reclassified.tif",
-        "path_2100": r"F:\Data\Landuse\PFT_5KM\SSP245_Resampled\SSP245_Reclassified\PFT_2100_245_reclassified.tif"
+        "path_2015": r"G:\Data\Landuse\PFT_5KM\SSP245_Resampled\SSP245_Reclassified\PFT_2015_245_reclassified.tif",
+        "path_2100": r"G:\Data\Landuse\PFT_5KM\SSP245_Resampled\SSP245_Reclassified\PFT_2100_245_reclassified.tif"
     },
     {
         "name": "SSP3-7.0",
         "code": "370",
-        "path_2015": r"F:\Data\Landuse\PFT_5KM\SSP370_Resampled\SSP370_Reclassified\PFT_2015_370_reclassified.tif",
-        "path_2100": r"F:\Data\Landuse\PFT_5KM\SSP370_Resampled\SSP370_Reclassified\PFT_2100_370_reclassified.tif"
+        "path_2015": r"G:\Data\Landuse\PFT_5KM\SSP370_Resampled\SSP370_Reclassified\PFT_2015_370_reclassified.tif",
+        "path_2100": r"G:\Data\Landuse\PFT_5KM\SSP370_Resampled\SSP370_Reclassified\PFT_2100_370_reclassified.tif"
     },
     {
         "name": "SSP5-8.5",
         "code": "585",
-        "path_2015": r"F:\Data\Landuse\PFT_5KM\SSP585_Resampled\SSP585_Reclassified\PFT_2015_585_reclassified.tif",
-        "path_2100": r"F:\Data\Landuse\PFT_5KM\SSP585_Resampled\SSP585_Reclassified\PFT_2100_585_reclassified.tif"
+        "path_2015": r"G:\Data\Landuse\PFT_5KM\SSP585_Resampled\SSP585_Reclassified\PFT_2015_585_reclassified.tif",
+        "path_2100": r"G:\Data\Landuse\PFT_5KM\SSP585_Resampled\SSP585_Reclassified\PFT_2100_585_reclassified.tif"
     }
 ]
 
 # 矢量边界路径
-vector_path = r"F:\Data\Landuse\Bound\world_dissolve1.shp"
+vector_path = r"G:\Data\Landuse\Bound\world_dissolve1.shp"
 
 # 1. 处理矢量边界
 print("处理矢量边界...")
@@ -195,23 +196,22 @@ legend_codes = [21, 31, 41, 12, 32, 42, 14, 24, 34, 13, 23, 43]
 # 对应的标签名称
 label_dict = {
     21: "Grassland → Forest",
-    31: "Wasteland → Forest",
+    31: "Barren → Forest",
     41: "Cropland → Forest",
     12: "Forest → Grassland",
-    32: "Wasteland → Grassland",
+    32: "Barren → Grassland",
     42: "Cropland → Grassland",
     14: "Forest → Cropland",
     24: "Grassland → Cropland",
-    34: "Wasteland → Cropland",
-    13: "Forest → Wasteland",
-    23: "Grassland → Wasteland",
-    43: "Cropland → Wasteland"
+    34: "Barren → Cropland",
+    13: "Forest → Barren",
+    23: "Grassland → Barren",
+    43: "Cropland → Barren"
 }
 
 # 创建图例元素和标签列表
 legend_elements = [Rectangle((0, 0), 1, 1, fc=color_dict[code], ec='k', lw=0.5) for code in legend_codes]
 legend_labels = [label_dict[code] for code in legend_codes]
-# 用于 colormap 和 norm 的排序版本
 
 # 存储空间变化图数据
 spatial_data = {}
@@ -285,16 +285,16 @@ selected_classes = ['Forest', 'Grassland', 'Barren', 'Cropland']  # 重点关注
 
 # 使用更亮丽的颜色方案
 class_colors = {
-    'Forest': '#4CAF50',  # 亮绿色
-    'Grassland': '#FFC107',  # 亮黄色
-    'Barren': '#FF9800',  # 亮橙色
-    'Cropland': '#E91E63',  # 亮粉色
-    'Urban': '#9C27B0',  # 紫色
-    'Others': '#607D8B'  # 蓝灰色
+    'Forest':    '#A6D96A',
+    'Grassland': '#A6BDDB',
+    'Cropland':  '#FEE08B',
+    'Barren':    '#C2A5CF',
+    'Urban':     '#9C27B0',  # 保持原样
+    'Others':    '#607D8B'   # 保持原样
 }
 
 # 基础路径
-base_dir = r"F:\Data\Landuse\PFT_5KM"
+base_dir = r"G:\Data\Landuse\PFT_5KM"
 
 # 像元面积 (5km分辨率)
 pixel_area = 25  # km²
@@ -308,62 +308,120 @@ transition_matrices = {}
 sankey_images = {}
 
 
-def generate_sankey(trans_matrix, scenario_name):
-    """优化后的桑基图生成函数"""
-    # 过滤四大地类转换
-    selected_classes = ['Forest', 'Grassland', 'Barren', 'Cropland']
-    filtered_matrix = trans_matrix.loc[selected_classes, selected_classes]
+def generate_sankey(
+        trans_matrix,
+        scenario_name=None,  # 不绘制标题
+        class_order=None,  # 左列从上到下；右列自动镜像
+        font_family="Times New Roman",
+        font_size=100,  # 稍降字体以避免小图遮挡
+        thickness_px=24,  # 节点厚度（像素）
+        gap_px_desired=120,  # 希望的相邻间距（像素）→ 可调大
+        node_pad_px=40,  # 让 Plotly 也强制留缝（arrangement='snap' 才生效）
+        left_x=0.05, right_x=0.95,  # 两侧位置，留出一点边
+        fig_width=1600, fig_height=1300,  # 导出尺寸
+        margins=(10, 10, 5, 5),  # (l,r,t,b) 对称外边距
+        y_is_center=True  # 大多数版本 y=中心；如发现偏移设 False
+):
+    import numpy as np
+    import plotly.graph_objects as go
+    import pandas as pd
 
-    # 转换关系处理
+    sel = ['Forest', 'Grassland', 'Barren', 'Cropland']
+    F = trans_matrix.loc[sel, sel].fillna(0).astype(float)
+
+    # 左右顺序（右侧镜像）
+    if class_order is None:
+        class_order = sel[:]
+    nodes_left = class_order
+    nodes_right = class_order[::-1]
+    n = len(class_order)
+
+    # 右列索引映射（target 用）
+    right_pos_map = {c: i for i, c in enumerate(nodes_right)}
+
+    # 颜色
+    node_colors = [class_colors[c] for c in nodes_left] + [class_colors[c] for c in nodes_right]
+
+    # 连线
     source, target, value, link_colors = [], [], [], []
-    class_to_num = {c: i + 1 for i, c in enumerate(selected_classes)}  # 森林=1,草地=2,荒地=3,耕地=4
-
-    # 构建连接数据
-    for i, src in enumerate(selected_classes):
-        for j, tgt in enumerate(selected_classes):
-            flow = filtered_matrix.at[src, tgt]
-            if flow > 0 and src != tgt:
-                source.append(i)  # 左侧节点索引
-                target.append(j + len(selected_classes))  # 右侧节点索引
+    class_to_num = {'Forest': 1, 'Grassland': 2, 'Barren': 3, 'Cropland': 4}
+    for i, fcls in enumerate(nodes_left):
+        for tcls in sel:
+            if fcls == tcls:
+                continue
+            flow = float(F.at[fcls, tcls])
+            if flow > 0:
+                source.append(i)
+                target.append(n + right_pos_map[tcls])
                 value.append(flow)
+                code = class_to_num[fcls] * 10 + class_to_num[tcls]
+                link_colors.append(color_dict.get(code, '#CCCCCC'))
 
-                # 获取颜色编码（根据转换类型）
-                trans_code = class_to_num[src] * 10 + class_to_num[tgt]
-                link_colors.append(color_dict.get(trans_code, '#CCCCCC'))
+    # ===== 用像素计算等距排布，再映射到 0–1（确保左右对齐） =====
+    l, r, t, b = margins
+    H = max(1, fig_height - t - b)
 
-    # 节点配置
-    node_labels = selected_classes * 2
-    node_colors = [class_colors[c] for c in selected_classes] * 2
+    total_needed = n * thickness_px + (n - 1) * gap_px_desired
+    if total_needed <= H:
+        node_th = float(thickness_px)
+        gap_px = float(gap_px_desired)
+        pad_tb = (H - total_needed) / 2.0
+    else:
+        s = H / total_needed
+        node_th = max(10.0, thickness_px * s)
+        gap_px = gap_px_desired * s
+        pad_tb = 0.0
 
-    # 创建桑基图
+    a = 0.2
+    y_tops_px = [pad_tb + i * (node_th + gap_px) for i in range(n)]
+    y_norm = [((y + node_th / 2) / H) if y_is_center else (y / H) for y in y_tops_px]
+    # ===== y 整体上移（单位：轴高的比例）=====
+    y_offset_up = 0.16  # 例如整体上移 4%，你可改成 0.02~0.08 按需调
+
+    if y_is_center:
+        # node.y 是"中心"坐标时，允许范围需要预留半个厚度
+        low = (node_th / 2.0) / H
+        high = 1.0 - low
+    else:
+        # node.y 是"顶部"坐标时，允许范围要预留一个厚度
+        low = 0.0
+        high = 1.0 - (node_th / H)
+
+    # 向上移动就是 "减去" 偏移量；并裁剪到合法范围 [low, high]
+    y_norm = [min(max(y - y_offset_up, low), high) for y in y_norm]
+
+    node_y = y_norm + y_norm
+    node_x = [left_x] * n + [right_x] * n
+
+    # 粗体标签
+    labels = [f"<b>{c}</b>" for c in (nodes_left + nodes_right)]
+
     fig = go.Figure(go.Sankey(
-        arrangement="snap",  # 使用自由布局
+        # 用 snap：保留我们给的 y，同时让 node.pad 生效，避免小图时"贴在一起"
+        arrangement='snap',
+        domain=dict(x=[0.0, 1.0], y=[0.0, 1.0]),
         node=dict(
-            pad=60,
-            thickness=40,
+            pad=node_pad_px,  # ★ 生效于同列节点之间的最小缝
+            thickness=node_th,
             line=dict(color="white", width=2),
-            label=node_labels,
+            label=labels,
             color=node_colors,
+            x=node_x, y=node_y
         ),
-        link=dict(
-            source=source,
-            target=target,
-            value=value,
-            color=link_colors
-        )
+        link=dict(source=source, target=target, value=value, color=link_colors)
     ))
 
-    # 优化布局参数
     fig.update_layout(
-        font=dict(family='Times New Roman', size=98, weight='bold',color='white'),
-        height=1200,
-        width=1600,
-        margin=dict(t=0, b=0, l=0, r=0),
-        plot_bgcolor='white'
+        width=fig_width, height=fig_height, autosize=False,
+        margin=dict(l=l, r=r, t=t, b=b),
+        font=dict(family=font_family, size=font_size, color="black"),
+        plot_bgcolor="white", paper_bgcolor="white"
     )
-
     return fig
 
+
+# 在进入循环之前放在外面
+first_class_order = None
 
 # 遍历所有情景
 for scenario_code, scenario_info in scenarios_line.items():
@@ -472,27 +530,89 @@ for scenario_code, scenario_info in scenarios_line.items():
     # ========= 创建桑基图 =========
     trans_matrix = transition_matrices[scenario_code]
 
-    # 生成桑基图
-    sankey_fig = generate_sankey(transition_matrices[scenario_code],
-                                 scenarios_line[scenario_code]['name'])
-    # 转换为图像并进行维度处理
+    if scenario_code == '126':
+        first_class_order = ['Forest', 'Grassland', 'Barren', 'Cropland']  # 你希望的左侧从上到下
+        sankey_fig = generate_sankey(trans_matrix, scenarios_line[scenario_code]['name'],
+                                     class_order=first_class_order)
+    else:
+        sankey_fig = generate_sankey(trans_matrix, scenarios_line[scenario_code]['name'],
+                                     class_order=first_class_order)  # 右侧自动镜像
     img_bytes = sankey_fig.to_image(format="png", scale=2, engine="kaleido")
     pil_img = Image.open(io.BytesIO(img_bytes))
     sankey_images[scenario_code] = np.array(pil_img)
 
-# 计算净变化量
-net_changes = {}
+
+# 计算区间净变化量
+def calculate_interval_changes(area_series, years, intervals):
+    """
+    计算每个区间的净变化量
+
+    参数:
+    area_series: 面积序列（与years对应）
+    years: 年份列表
+    intervals: 区间列表，如[(2015, 2035), (2035, 2050), (2050, 2070), (2070, 2090), (2090, 2100)]
+
+    返回:
+    interval_years: 区间中点年份
+    interval_changes: 每个区间的净变化量
+    """
+    interval_years = []
+    interval_changes = []
+
+    for start_year, end_year in intervals:
+        # 找到起始年和结束年的索引
+        try:
+            start_idx = years.index(start_year)
+            end_idx = years.index(end_year)
+        except ValueError:
+            # 如果年份不在列表中，尝试找到最接近的年份
+            start_idx = min(range(len(years)), key=lambda i: abs(years[i] - start_year))
+            end_idx = min(range(len(years)), key=lambda i: abs(years[i] - end_year))
+
+        # 计算净变化
+        start_area = area_series[start_idx]
+        end_area = area_series[end_idx]
+
+        if not np.isnan(start_area) and not np.isnan(end_area):
+            change = end_area - start_area
+        else:
+            change = np.nan
+
+        # 计算区间中点年份
+        mid_year = (start_year + end_year) / 2
+
+        interval_years.append(mid_year)
+        interval_changes.append(change)
+
+    return interval_years, interval_changes
+
+
+# 定义五个区间
+intervals = [
+    (2015, 2035),
+    (2035, 2050),
+    (2050, 2070),
+    (2070, 2090),
+    (2090, 2100)
+]
+
+# 定义区间标签（用于X轴标注）
+interval_labels = ['2015-2035', '2035-2050', '2050-2070', '2070-2090', '2090-2100']
+
+# 计算区间中点（用于绘图位置）
+interval_mid_points = [(start + end) / 2 for start, end in intervals]
+
+# 计算每个情景每个地类的区间净变化
+interval_net_changes = {}
 for scenario_code in scenarios_line:
-    net_changes[scenario_code] = {}
-    for lc in land_classes:
+    interval_net_changes[scenario_code] = {}
+    for lc in selected_classes:  # 只计算我们关注的四个地类
         area_series = results[scenario_code][lc]
-        changes = [0]  # 2015年无变化
-        for i in range(1, len(area_series)):
-            if np.isnan(area_series[i]) or np.isnan(area_series[i - 1]):
-                changes.append(np.nan)
-            else:
-                changes.append(area_series[i] - area_series[i - 1])
-        net_changes[scenario_code][lc] = changes
+        interval_years, interval_changes = calculate_interval_changes(area_series, years, intervals)
+        interval_net_changes[scenario_code][lc] = {
+            'years': interval_years,
+            'changes': interval_changes
+        }
 
 print(f"折线图和桑基图数据处理完成，总耗时: {time.time() - start_time_global:.2f}秒")
 
@@ -516,196 +636,286 @@ class SciFormatter(ScalarFormatter):
 sci_formatter = SciFormatter(useMathText=True)
 
 # 创建大型图表 - 5行4列
-fig = plt.figure(figsize=(24, 24), dpi=500)  # 增加高度以容纳所有内容
+fig = plt.figure(figsize=(26, 26), dpi=500)  # 增加高度以容纳所有内容
 
 # 定义网格布局：5行4列
 gs = GridSpec(5, 4, figure=fig,
-              height_ratios=[1.1, 1.1, 1.3, 1.3, 0.2],
-              hspace=0.1,  # 增加行间距
-              wspace=0.1,  # 增加列间距
+              height_ratios=[1.1, 1.1, 1.3, 1.3, 0.3],
+              hspace=0.18,  # 增加行间距
+              wspace=0.15,  # 增加列间距
               top=0.95, bottom=0.15,
               left=0.02, right=0.97)
+
 # 左上角折线图区域 (第0-1行, 第0-1列)
 gs_right_top = GridSpecFromSubplotSpec(2, 2, subplot_spec=gs[0:2, 0:2],
-                                       hspace=0.1, wspace=0.2)  # 增加折线图区域内部间距
+                                       hspace=0.12, wspace=0.2)  # 增加折线图区域内部间距
 
 # 右上角桑基图区域 (第0-1行, 第2-3列)
 gs_left_top = GridSpecFromSubplotSpec(2, 2, subplot_spec=gs[0:2, 2:4],
-                                      hspace=0.1, wspace=0.1)  # 增加桑基图区域内部间距
-# ====================== 第1行：净变化折线图 (森林和草地) ======================
+                                      hspace=0.05, wspace=0.03)  # 增加桑基图区域内部间距
+
+# ====================== 修改后的折线图部分：区间净变化 ======================
 # 森林净变化 (左上角区域第0行第0列)
 ax_forest = fig.add_subplot(gs_right_top[0, 0])
+
+# 为每个情景绘制区间净变化
 for scenario_code, scenario_info in scenarios_line.items():
-    if scenario_code in net_changes:
-        # 直接绘制折线图
+    if scenario_code in interval_net_changes and 'Forest' in interval_net_changes[scenario_code]:
+        data = interval_net_changes[scenario_code]['Forest']
+        # 绘制折线
         ax_forest.plot(
-            years,
-            net_changes[scenario_code]['Forest'],
+            data['years'],
+            data['changes'],
             color=scenario_info['color'],
             linestyle=scenario_info['linestyle'],
             label=scenario_info['name'],
-            linewidth=2.5  # 增加线宽
+            linewidth=2.5,  # 增加线宽
+            marker='o',  # 添加点标记
+            markersize=8,  # 标记大小
+            markeredgecolor='black',  # 标记边缘颜色
+            markeredgewidth=1  # 标记边缘宽度
         )
 
 # 添加基准年垂直线
-ax_forest.axvline(x=2015, color='red', linestyle='--', alpha=0.7)
+ax_forest.axvline(x=2015, color='red', linestyle='--', alpha=0.7, linewidth=1.5)
+
+# 设置森林图Y轴范围：-149到99
+ax_forest.set_ylim(-1490000, 1190000)
 
 # 添加区域填充
+xlim = ax_forest.get_xlim()
 ylim = ax_forest.get_ylim()
-ax_forest.fill_between(years, 0, ylim[1], color='lightgreen', alpha=0.2)
-ax_forest.fill_between(years, ylim[0], 0, color='lightcoral', alpha=0.2)
 
-# 添加标注
-ax_forest.text(2090, ylim[1] * 0.9, 'Increase',
-               fontsize=20, ha='center', va='center', color='darkgreen', fontname='Times New Roman')
-ax_forest.text(2090, ylim[0] * 0.9, 'Decrease',
-               fontsize=20, ha='center', va='center', color='darkred', fontname='Times New Roman')
+# 在y>0的区域填充浅绿色
+ax_forest.fill_between([xlim[0], xlim[1]], 0, ylim[1],
+                       color='lightgreen', alpha=0.2, zorder=0)
+# 在y<0的区域填充浅红色
+ax_forest.fill_between([xlim[0], xlim[1]], ylim[0], 0,
+                       color='lightcoral', alpha=0.2, zorder=0)
+
+# 添加标注 - 向左平移，放在图内
+increase_pos = 750000  # Y轴位置
+decrease_pos = -1250000  # Y轴位置
+ax_forest.text(2082, increase_pos+150000 , 'Increase',
+               fontsize=22, ha='center', va='center', color='darkgreen', fontname='Times New Roman')
+ax_forest.text(2042, decrease_pos, 'Decrease',
+               fontsize=22, ha='center', va='center', color='darkred', fontname='Times New Roman')
 
 # 设置轴标签和格式
-ax_forest.set_ylabel("Forest Net Change (10$^5$ km$^2$)", fontsize=20, fontname='Times New Roman')
-ax_forest.grid(True, linestyle=':', alpha=0.7)
-ax_forest.axhline(0, color='k', linewidth=0.8)
-ax_forest.tick_params(axis='x', labelbottom=False)  # 不显示x轴标签
-ax_forest.set_xlim(2015, 2101)
-xticks = list(range(2015, 2101, 10))
-ax_forest.set_xticks(xticks)
-ax_forest.tick_params(axis='both', labelsize=15)
-ax_forest.yaxis.set_major_formatter(sci_formatter)  # 使用科学计数法
+ax_forest.set_ylabel("Forest net change (Mha)", fontsize=20, fontname='Times New Roman')
+ax_forest.grid(True, linestyle=':', alpha=0.7, zorder=0)
+ax_forest.axhline(0, color='k', linewidth=1.0, zorder=0)
+
+# 设置X轴 - 使用区间中点作为刻度位置，区间标签作为刻度标签
+
+ax_forest.set_xticks(interval_mid_points)
+ax_forest.set_xticklabels([])
+# ax_forest.set_xticklabels(interval_labels, fontsize=16, fontname='Times New Roman', rotation=45, ha='right')
+
+# 不显示X轴标签（去掉"Year"）
+ax_forest.tick_params(axis='x', labelbottom=True)  # 显示X轴标签
+
+# 设置x轴范围为2015-2100
+ax_forest.set_xlim(2015, 2100)
+
+# 设置y轴格式
+ax_forest.tick_params(axis='both', labelsize=20)
+ax_forest.yaxis.set_major_formatter(FuncFormatter(lambda v, pos: f'{v / 1e4:.0f}'))
 ax_forest.yaxis.get_offset_text().set_visible(False)  # 隐藏乘幂标记
-ax_forest.legend( loc='upper left', prop={'family': 'Times New Roman', 'size': 15}, ncol=2)
+
+# 添加图例
+ax_forest.legend(loc='upper left', prop={'family': 'Times New Roman', 'size': 15}, ncol=2)
 
 # 添加字母标签 (a)
-ax_forest.text(-0.09, 1.04, 'a', transform=ax_forest.transAxes,
-               fontsize=24, fontweight='bold', fontname='Times New Roman', va='top')
+ax_forest.text(-0.09, 1.06, 'a', transform=ax_forest.transAxes,
+               fontsize=26, fontweight='bold', fontname='Times New Roman', va='top')
 
 # 草地净变化 (左上角区域第0行第1列)
 ax_grass = fig.add_subplot(gs_right_top[0, 1])
+
+# 为每个情景绘制区间净变化
 for scenario_code, scenario_info in scenarios_line.items():
-    if scenario_code in net_changes:
-        # 直接绘制折线图
+    if scenario_code in interval_net_changes and 'Grassland' in interval_net_changes[scenario_code]:
+        data = interval_net_changes[scenario_code]['Grassland']
+        # 绘制折线
         ax_grass.plot(
-            years,
-            net_changes[scenario_code]['Grassland'],
+            data['years'],
+            data['changes'],
             color=scenario_info['color'],
             linestyle=scenario_info['linestyle'],
-            label=scenario_info['name'],
-            linewidth=2.5  # 增加线宽
+            linewidth=2.5,  # 增加线宽
+            marker='o',  # 添加点标记
+            markersize=8,  # 标记大小
+            markeredgecolor='black',  # 标记边缘颜色
+            markeredgewidth=1  # 标记边缘宽度
         )
 
 # 添加基准年垂直线
-ax_grass.axvline(x=2015, color='red', linestyle='--', alpha=0.7)
+ax_grass.axvline(x=2015, color='red', linestyle='--', alpha=0.7, linewidth=1.5)
 
 # 添加区域填充
+xlim = ax_grass.get_xlim()
 ylim = ax_grass.get_ylim()
-ax_grass.fill_between(years, 0, ylim[1], color='lightgreen', alpha=0.2)
-ax_grass.fill_between(years, ylim[0], 0, color='lightcoral', alpha=0.2)
+ax_grass.fill_between([xlim[0], xlim[1]], 0, ylim[1],
+                      color='lightgreen', alpha=0.2, zorder=0)
+ax_grass.fill_between([xlim[0], xlim[1]], ylim[0], 0,
+                      color='lightcoral', alpha=0.2, zorder=0)
 
-# 添加标注
-ax_grass.text(2090, ylim[1] * 0.9, 'Increase',
-              fontsize=20, ha='center', va='center', color='darkgreen', fontname='Times New Roman')
-ax_grass.text(2090, ylim[0] * 0.9, 'Decrease',
-              fontsize=20, ha='center', va='center', color='darkred', fontname='Times New Roman')
+# 添加标注 - 向左平移，放在图内
+ylim = ax_grass.get_ylim()
+increase_pos = ylim[1] * 0.8  # Y轴位置
+decrease_pos = ylim[0] * 0.8  # Y轴位置
+ax_grass.text(2042, increase_pos, 'Increase',
+              fontsize=22, ha='center', va='center', color='darkgreen', fontname='Times New Roman')
+ax_grass.text(2042, decrease_pos, 'Decrease',
+              fontsize=22, ha='center', va='center', color='darkred', fontname='Times New Roman')
 
 # 设置轴标签和格式
-ax_grass.set_ylabel("Grassland Net Change (10$^5$ km$^2$)", fontsize=20, fontname='Times New Roman')
-ax_grass.grid(True, linestyle=':', alpha=0.7)
-ax_grass.axhline(0, color='k', linewidth=0.8)
-ax_grass.tick_params(axis='x', labelbottom=False)  # 不显示x轴标签
-ax_grass.set_xlim(2015, 2101)
-xticks = list(range(2015, 2101, 10))
-ax_grass.set_xticks(xticks)
+ax_grass.set_ylabel("Grassland net change (Mha)", fontsize=20, fontname='Times New Roman')
+ax_grass.grid(True, linestyle=':', alpha=0.7, zorder=0)
+ax_grass.axhline(0, color='k', linewidth=1.0, zorder=0)
+
+# 设置X轴 - 使用区间中点作为刻度位置，区间标签作为刻度标签
+ax_grass.set_xticks(interval_mid_points)
+ax_grass.set_xticklabels([])
+# ax_grass.set_xticklabels(interval_labels, fontsize=16, fontname='Times New Roman', rotation=45, ha='right')
+
+# 不显示X轴标签（去掉"Year"）
+ax_grass.tick_params(axis='x', labelbottom=True)  # 显示X轴标签
+ax_grass.set_xlim(2015, 2100)
+
+# 设置y轴格式
 ax_grass.tick_params(axis='both', labelsize=20)
-ax_grass.yaxis.set_major_formatter(sci_formatter)  # 使用科学计数法
+ax_grass.yaxis.set_major_formatter(FuncFormatter(lambda v, pos: f'{v / 1e4:.0f}'))
 ax_grass.yaxis.get_offset_text().set_visible(False)  # 隐藏乘幂标记
 
 # 添加字母标签 (b)
-ax_grass.text(-0.09, 1.04, 'b', transform=ax_grass.transAxes,
-              fontsize=24, fontweight='bold', fontname='Times New Roman', va='top')
+ax_grass.text(-0.09, 1.06, 'b', transform=ax_grass.transAxes,
+              fontsize=26, fontweight='bold', fontname='Times New Roman', va='top')
 
-# ====================== 第2行：净变化折线图 (荒地和耕地) ======================
 # 荒地净变化 (左上角区域第1行第0列)
 ax_barren = fig.add_subplot(gs_right_top[1, 0])
+
+# 为每个情景绘制区间净变化
 for scenario_code, scenario_info in scenarios_line.items():
-    if scenario_code in net_changes:
-        # 直接绘制折线图
+    if scenario_code in interval_net_changes and 'Barren' in interval_net_changes[scenario_code]:
+        data = interval_net_changes[scenario_code]['Barren']
+        # 绘制折线
         ax_barren.plot(
-            years,
-            net_changes[scenario_code]['Barren'],
+            data['years'],
+            data['changes'],
             color=scenario_info['color'],
             linestyle=scenario_info['linestyle'],
-            linewidth=2.5  # 增加线宽
+            linewidth=2.5,  # 增加线宽
+            marker='o',  # 添加点标记
+            markersize=8,  # 标记大小
+            markeredgecolor='black',  # 标记边缘颜色
+            markeredgewidth=1  # 标记边缘宽度
         )
 
 # 添加基准年垂直线
-ax_barren.axvline(x=2015, color='red', linestyle='--', alpha=0.7)
+ax_barren.axvline(x=2015, color='red', linestyle='--', alpha=0.7, linewidth=1.5)
 
 # 添加区域填充
+xlim = ax_barren.get_xlim()
 ylim = ax_barren.get_ylim()
-ax_barren.fill_between(years, 0, ylim[1], color='lightgreen', alpha=0.2)
-ax_barren.fill_between(years, ylim[0], 0, color='lightcoral', alpha=0.2)
+ax_barren.fill_between([xlim[0], xlim[1]], 0, ylim[1],
+                       color='lightgreen', alpha=0.2, zorder=0)
+ax_barren.fill_between([xlim[0], xlim[1]], ylim[0], 0,
+                       color='lightcoral', alpha=0.2, zorder=0)
 
-# 添加标注
-ax_barren.text(2090, ylim[1] * 0.9, 'Increase',
-               fontsize=20, ha='center', va='center', color='darkgreen', fontname='Times New Roman')
-ax_barren.text(2090, ylim[0] * 0.9, 'Decrease',
-               fontsize=20, ha='center', va='center', color='darkred', fontname='Times New Roman')
+# 添加标注 - 向左平移，放在图内
+ylim = ax_barren.get_ylim()
+increase_pos = ylim[1] * 0.8  # Y轴位置
+decrease_pos = ylim[0] * 0.8  # Y轴位置
+ax_barren.text(2042, increase_pos, 'Increase',
+               fontsize=22, ha='center', va='center', color='darkgreen', fontname='Times New Roman')
+ax_barren.text(2042, decrease_pos, 'Decrease',
+               fontsize=22, ha='center', va='center', color='darkred', fontname='Times New Roman')
 
 # 设置轴标签和格式
-ax_barren.set_ylabel("Barren Land Net Change (10$^5$ km$^2$)", fontsize=20, fontname='Times New Roman')
-ax_barren.grid(True, linestyle=':', alpha=0.7)
-ax_barren.axhline(0, color='k', linewidth=0.8)
-ax_barren.set_xlim(2015, 2101)
-xticks = list(range(2015, 2101, 20))
-ax_barren.set_xticks(xticks)
-ax_barren.tick_params(axis='both', labelsize=18, rotation=10)
-ax_barren.yaxis.set_major_formatter(sci_formatter)  # 使用科学计数法
+ax_barren.set_ylabel("Barren land net change (Mha)", fontsize=20, fontname='Times New Roman')
+ax_barren.grid(True, linestyle=':', alpha=0.7, zorder=0)
+ax_barren.axhline(0, color='k', linewidth=1.0, zorder=0)
+
+# 设置X轴 - 使用区间中点作为刻度位置，区间标签作为刻度标签
+ax_barren.set_xticks(interval_mid_points)
+ax_barren.set_xticklabels(interval_labels, fontsize=16, fontname='Times New Roman', rotation=12, ha='right')
+
+# 不显示X轴标签（去掉"Year"）
+ax_barren.tick_params(axis='x', labelbottom=True)  # 显示X轴标签
+ax_barren.set_xlim(2015, 2100)
+
+# 设置y轴格式
+ax_barren.tick_params(axis='both', labelsize=20)
+ax_barren.yaxis.set_major_formatter(FuncFormatter(lambda v, pos: f'{v / 1e4:.0f}'))
 ax_barren.yaxis.get_offset_text().set_visible(False)  # 隐藏乘幂标记
 
 # 添加字母标签 (c)
-ax_barren.text(-0.08, 1.04, 'c', transform=ax_barren.transAxes,
-               fontsize=24, fontweight='bold', fontname='Times New Roman', va='top')
+ax_barren.text(-0.09, 1.06, 'c', transform=ax_barren.transAxes,
+               fontsize=26, fontweight='bold', fontname='Times New Roman', va='top')
 
 # 耕地净变化 (左上角区域第1行第1列)
 ax_crop = fig.add_subplot(gs_right_top[1, 1])
+
+# 为每个情景绘制区间净变化
 for scenario_code, scenario_info in scenarios_line.items():
-    if scenario_code in net_changes:
-        # 直接绘制折线图
+    if scenario_code in interval_net_changes and 'Cropland' in interval_net_changes[scenario_code]:
+        data = interval_net_changes[scenario_code]['Cropland']
+        # 绘制折线
         ax_crop.plot(
-            years,
-            net_changes[scenario_code]['Cropland'],
+            data['years'],
+            data['changes'],
             color=scenario_info['color'],
             linestyle=scenario_info['linestyle'],
-            linewidth=2.5  # 增加线宽
+            linewidth=2.5,  # 增加线宽
+            marker='o',  # 添加点标记
+            markersize=8,  # 标记大小
+            markeredgecolor='black',  # 标记边缘颜色
+            markeredgewidth=1  # 标记边缘宽度
         )
 
 # 添加基准年垂直线
-ax_crop.axvline(x=2015, color='red', linestyle='--', alpha=0.7)
+ax_crop.axvline(x=2015, color='red', linestyle='--', alpha=0.7, linewidth=1.5)
 
 # 添加区域填充
+xlim = ax_crop.get_xlim()
 ylim = ax_crop.get_ylim()
-ax_crop.fill_between(years, 0, ylim[1], color='lightgreen', alpha=0.2)
-ax_crop.fill_between(years, ylim[0], 0, color='lightcoral', alpha=0.2)
+ax_crop.fill_between([xlim[0], xlim[1]], 0, ylim[1],
+                     color='lightgreen', alpha=0.2, zorder=0)
+ax_crop.fill_between([xlim[0], xlim[1]], ylim[0], 0,
+                     color='lightcoral', alpha=0.2, zorder=0)
 
-# 添加标注
-ax_crop.text(2090, ylim[1] * 0.9, 'Increase',
-             fontsize=20, ha='center', va='center', color='darkgreen', fontname='Times New Roman')
-ax_crop.text(2090, ylim[0] * 0.9, 'Decrease',
-             fontsize=20, ha='center', va='center', color='darkred', fontname='Times New Roman')
+# 添加标注 - 向左平移，放在图内
+ylim = ax_crop.get_ylim()
+increase_pos = ylim[1] * 0.8  # Y轴位置
+decrease_pos = ylim[0] * 0.8  # Y轴位置
+ax_crop.text(2042, increase_pos, 'Increase',
+             fontsize=22, ha='center', va='center', color='darkgreen', fontname='Times New Roman')
+ax_crop.text(2042, decrease_pos, 'Decrease',
+             fontsize=22, ha='center', va='center', color='darkred', fontname='Times New Roman')
 
 # 设置轴标签和格式
-ax_crop.set_ylabel("Cropland Net Change (10$^5$ km$^2$)", fontsize=20, fontname='Times New Roman')
-ax_crop.grid(True, linestyle=':', alpha=0.7)
-ax_crop.axhline(0, color='k', linewidth=0.8)
-ax_crop.set_xlim(2015, 2101)
-xticks = list(range(2015, 2101, 20))
-ax_crop.set_xticks(xticks)
-ax_crop.tick_params(axis='both', labelsize=18, rotation=10)
-ax_crop.yaxis.set_major_formatter(sci_formatter)  # 使用科学计数法
+# 不显示X轴标签（去掉"Year"）
+ax_crop.set_ylabel("Cropland net change (Mha)", fontsize=20, fontname='Times New Roman')
+ax_crop.grid(True, linestyle=':', alpha=0.7, zorder=0)
+ax_crop.axhline(0, color='k', linewidth=1.0, zorder=0)
+
+# 设置X轴 - 使用区间中点作为刻度位置，区间标签作为刻度标签
+ax_crop.set_xticks(interval_mid_points)
+ax_crop.set_xticklabels(interval_labels, fontsize=16, fontname='Times New Roman', rotation=12, ha='right')
+
+ax_crop.tick_params(axis='x', labelbottom=True)  # 显示X轴标签
+ax_crop.set_xlim(2015, 2100)
+
+# 设置y轴格式
+ax_crop.tick_params(axis='both', labelsize=20)
+ax_crop.yaxis.set_major_formatter(FuncFormatter(lambda v, pos: f'{v / 1e4:.0f}'))
 ax_crop.yaxis.get_offset_text().set_visible(False)  # 隐藏乘幂标记
 
 # 添加字母标签 (d)
-ax_crop.text(-0.09, 1.04, 'd', transform=ax_crop.transAxes,
-             fontsize=24, fontweight='bold', fontname='Times New Roman', va='top')
+ax_crop.text(-0.09, 1.06, 'd', transform=ax_crop.transAxes,
+             fontsize=26, fontweight='bold', fontname='Times New Roman', va='top')
 
 # ====================== 第3行：桑基图 ======================
 # 创建桑基图（放在右上角区域）
@@ -721,12 +931,12 @@ for idx, (scenario_code, pos) in enumerate(zip(scenarios_line, sankey_positions)
     row, col = pos
     ax = fig.add_subplot(gs_left_top[row, col])
     ax.imshow(sankey_images[scenario_code])
+    ax.set_aspect('auto')  # 避免被压缩/裁切
     ax.axis('off')
 
     # 添加桑基图字母标签
-    ax.text(-0.04, 1.03, sankey_labels[idx], transform=ax.transAxes,
-            fontsize=24, fontweight='bold', fontname='Times New Roman', va='top')
-
+    ax.text(-0.03, 1.05, sankey_labels[idx], transform=ax.transAxes,
+            fontsize=26, fontweight='bold', fontname='Times New Roman', va='top')
 
 from matplotlib.colors import ListedColormap, BoundaryNorm
 
@@ -739,18 +949,13 @@ for code, color in color_dict.items():
 # 建立颜色映射和规范化器
 cmap = ListedColormap(color_list)
 norm = BoundaryNorm(boundaries=range(0, max_code + 2), ncolors=max_code + 1)
+
 # 提取有效转换代码
 legend_codes_sorted = sorted(legend_codes)
-# all_codes_sorted = sorted([0] + legend_codes)
-# cmap_colors_sorted = [color_dict[code] for code in all_codes_sorted]
-# cmap_colors_sorted = [color_dict[code] for code in legend_codes_sorted]
-# cmap = ListedColormap(cmap_colors_sorted)
-bounds = legend_codes_sorted + [legend_codes_sorted[-1] + 1]
-# norm = BoundaryNorm(bounds, ncolors=len(cmap_colors_sorted))
 
-
-# ====================== 第4行：空间变化图 (SSP126和SSP245) ======================
 spatial_labels = ['i', 'j', 'k', 'l']  # 图注标签
+
+
 def setup_spatial_ax(ax, extent,
                      draw_left=False, draw_bottom=False,
                      draw_right=False, draw_top=False,
@@ -793,11 +998,9 @@ def setup_spatial_ax(ax, extent,
     x_ticklen = (xmax - xmin) * 0.01
     y_ticklen = (ymax - ymin) * 0.01
 
-
     # 绘制经度刻度线
     for x in xticks:
         if xmin <= x <= xmax:
-
             if draw_bottom:
                 ax.plot([x, x], [ymin, ymin - y_ticklen],
                         color='black', linewidth=1,
@@ -838,6 +1041,7 @@ def setup_spatial_ax(ax, extent,
 
     return ax
 
+
 # SSP126
 if '126' in spatial_data:
     data = spatial_data['126']
@@ -858,8 +1062,8 @@ if '126' in spatial_data:
                                    draw_right=True, draw_top=False,
                                    label_left=True, label_bottom=None,
                                    label_right=None, label_top=None)
-    ax_spatial1.text(-0.02, 1.01, spatial_labels[0], transform=ax_spatial1.transAxes,
-                     fontsize=24, fontweight='bold', fontname='Times New Roman', va='top')
+    ax_spatial1.text(-0.03, 1.02, spatial_labels[0], transform=ax_spatial1.transAxes,
+                     fontsize=26, fontweight='bold', fontname='Times New Roman', va='top')
 
 # SSP245
 if '245' in spatial_data:
@@ -881,8 +1085,8 @@ if '245' in spatial_data:
                                    draw_right=True, draw_top=False,
                                    label_left=None, label_bottom=None,
                                    label_right=True, label_top=None)
-    ax_spatial2.text(-0.02, 1.01, spatial_labels[1], transform=ax_spatial2.transAxes,
-                     fontsize=24, fontweight='bold', fontname='Times New Roman', va='top')
+    ax_spatial2.text(-0.03, 1.02, spatial_labels[1], transform=ax_spatial2.transAxes,
+                     fontsize=26, fontweight='bold', fontname='Times New Roman', va='top')
 
 # ====================== 第5行：空间变化图 (SSP370和SSP585) ======================
 
@@ -906,8 +1110,8 @@ if '370' in spatial_data:
                                    draw_right=True, draw_top=True,
                                    label_left=True, label_bottom=True,
                                    label_right=None, label_top=None)
-    ax_spatial3.text(-0.02, 1.01, spatial_labels[2], transform=ax_spatial3.transAxes,
-                     fontsize=24, fontweight='bold', fontname='Times New Roman', va='top')
+    ax_spatial3.text(-0.03, 1.02, spatial_labels[2], transform=ax_spatial3.transAxes,
+                     fontsize=26, fontweight='bold', fontname='Times New Roman', va='top')
 
 # SSP585
 if '585' in spatial_data:
@@ -929,11 +1133,8 @@ if '585' in spatial_data:
                                    draw_right=True, draw_top=True,
                                    label_left=None, label_bottom=True,
                                    label_right=True, label_top=None)
-    ax_spatial4.text(-0.02, 1.01, spatial_labels[3], transform=ax_spatial4.transAxes,
-                     fontsize=24, fontweight='bold', fontname='Times New Roman', va='top')
-
-
-
+    ax_spatial4.text(-0.03, 1.02, spatial_labels[3], transform=ax_spatial4.transAxes,
+                     fontsize=26, fontweight='bold', fontname='Times New Roman', va='top')
 
 legend_ax = fig.add_subplot(gs[4, :])  # 占用最后一行所有列
 legend_ax.axis('off')  # 不显示坐标轴
@@ -942,77 +1143,23 @@ legend_ax.axis('off')  # 不显示坐标轴
 legend = legend_ax.legend(
     legend_elements,
     legend_labels,
-    loc='center',
-    ncol=6,  # 4列布局
-    prop={'family': 'Times New Roman', 'size': 20},
+    loc='center',  # 锚点在 bbox 的中心
+    ncol=4,  # 每行 4 个
+    mode='expand',  # ★ 关键：横向拉伸，均匀铺满
+    bbox_to_anchor=(0, 0, 1, 1),  # ★ 关键：图例铺满 legend_ax
+    prop={'family': 'Times New Roman', 'size': 24},
     frameon=True,
     edgecolor='gray',
-    framealpha=0.9
+    framealpha=0.9,
+    borderaxespad=0.0,  # 贴边一点
+    columnspacing=1.6,  # 列间距可微调
+    handlelength=1.4,  # 颜色块长度
+    labelspacing=0.6  # 行内/行间距
 )
 
 # 保存图像
-output_path = os.path.join(r"F:\Data\paper\paper1\pic", "Integrated_Landuse_Analysis3.png")
+output_path = os.path.join(r"G:\Data\paper\paper1\pic", "Integrated_Landuse_Analysis_Interval3.png")
 plt.savefig(output_path, dpi=600, bbox_inches='tight')
 print(f"综合图表已保存至: {output_path}")
 plt.close()
-# import os
-# import pandas as pd
-# import numpy as np
-#
-# # 输出目录
-# out_dir = r"F:\Data\Landuse\PFT_5KM\result"
-# os.makedirs(out_dir, exist_ok=True)
-# for code, scen_info in scenarios_line.items():
-#     scen_name = scen_info['name']
-#     # 构造两个表
-#     # 1. Area Change
-#     area_rows = []
-#     for lc in land_classes:
-#         series = results[code][lc]
-#         a2015 = series[0] if series else np.nan
-#         a2100 = series[-1] if len(series) > 1 else np.nan
-#         net   = a2100 - a2015 if not np.isnan(a2015) and not np.isnan(a2100) else np.nan
-#         area_rows.append({
-#             'LandClass':     lc,
-#             'Area_2015_km2': a2015,
-#             'Area_2100_km2': a2100,
-#             'NetChange_km2': net
-#         })
-#     df_area = pd.DataFrame(area_rows)
-#
-#     # 2. Detailed Transitions
-#     # 读取该场景的转换矩阵
-#     # 读取该场景的转换矩阵
-#     df_trans = transition_matrices[code]
-#
-#     # —— 将矩阵展开为三列：From, To, Area_km2 —— #
-#     # 1. 重置索引，把旧索引变成一列
-#     df_trans = df_trans.reset_index()
-#
-#     # 2. 找到刚刚新生成的那一列的名字（可能是 'index'，也可能是 'Start'）
-#     id_col = df_trans.columns[0]
-#
-#     # 3. 重命名为统一的 'From'
-#     df_trans = df_trans.rename(columns={id_col: 'From'})
-#
-#     # 4. melt 成长表
-#     df_list = df_trans.melt(
-#         id_vars='From',
-#         var_name='To',
-#         value_name='Area_km2'
-#     )
-#
-#     # 5. 只保留不同地类之间的转换
-#     df_list = df_list[df_list['From'] != df_list['To']]
-#
-#     # 写入同一个 CSV
-#     csv_path = os.path.join(out_dir, f"{code}_landuse_summary.csv")
-#     with open(csv_path, 'w', encoding='utf-8-sig', newline='') as f:
-#         # 写标题行
-#         f.write(f"{scen_name} — Area Change (2015 vs 2100)\n")
-#         df_area.to_csv(f, index=False, float_format="%.2f")
-#         f.write("\n")  # 空一行
-#         f.write(f"{scen_name} — Detailed Transitions (From, To, Area_km2)\n")
-#         df_list.to_csv(f, index=False, float_format="%.2f")
-#
-#     print(f"已生成：{csv_path}")
+print(f"总处理时间: {time.time() - start_time_global:.2f}秒")
